@@ -180,7 +180,7 @@ module Is24
       }
       options = defaults.merge(options)
 
-      if options.region_id and options.city_id
+      if options[:region_id] and options[:city_id]
         response = connection(:marketdata).get("pricehistory/region/#{options[:region_id]}/city/#{options[:city_id]}" +
                                                "?realEstateType=#{options[:realestate_type]}" +
                                                "&ageClass=#{options[:age_class]}" +
