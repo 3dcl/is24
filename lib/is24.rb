@@ -92,7 +92,7 @@ module Is24
       raise "Missing Credentials!" if @consumer_secret.nil? || @consumer_key.nil?
     end
 
-    def request_token( callback_uri = nil )
+    def request_token( callback_uri )
       # TODO error handling
       response = connection(:authorization, callback_uri).get("oauth/request_token")
 
@@ -181,10 +181,10 @@ module Is24
       options = defaults.merge(options)
 
       if options.region_id and options.city_id
-        response = connection(:marketdata).get("pricehistory/region/#{options.region_id}/city/#{options.city_id}" +
-                                               "?realEstateType=#{options.realestate_type}" +
-                                               "&ageClass=#{options.age_class}" +
-                                               "&startDate=#{options.startDate}")
+        response = connection(:marketdata).get("pricehistory/region/#{options[:region_id]}/city/#{options[:city_id]}" +
+                                               "?realEstateType=#{options[:realestate_type]}" +
+                                               "&ageClass=#{options[:age_class]}" +
+                                               "&startDate=#{options[:startDate]}")
         
         response.body
       else
