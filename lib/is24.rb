@@ -184,7 +184,7 @@ module Is24
         response = connection(:marketdata).get("pricehistory/region/#{options[:region_id]}/city/#{options[:city_id]}" +
                                                "?realEstateType=#{options[:realestate_type]}" +
                                                "&ageClass=#{options[:age_class]}" +
-                                               "&startDate=#{options[:startDate]}")
+                                               "&startDate=#{options[:start_date]}")
         
         response.body
       else
