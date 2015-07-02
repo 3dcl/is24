@@ -12,6 +12,7 @@ module Is24
 
     API_ENDPOINT = "http://rest.immobilienscout24.de/restapi/api/search/v1.0/"
     API_OFFER_ENDPOINT = "http://rest.immobilienscout24.de/restapi/api/offer/v1.0/"
+    API_MARKETDATA_ENDPOINT = "https://rest.immobilienscout24.de/restapi/api/marketdata/v1.0/"
     API_AUTHORIZATION_ENDPOINT = "http://rest.immobilienscout24.de/restapi/security/"
 
     # TODO move in separate module
@@ -91,7 +92,7 @@ module Is24
       raise "Missing Credentials!" if @consumer_secret.nil? || @consumer_key.nil?
     end
 
-    def request_token( callback_uri )
+    def request_token( callback_uri = nil )
       # TODO error handling
       response = connection(:authorization, callback_uri).get("oauth/request_token")
 
@@ -171,6 +172,26 @@ module Is24
       response.body["shortlist.shortlistEntries"].first["shortlistEntry"]
     end
 
+    def price_history(options)
+      defaults = {
+        :realestate_type => "APARTMENT_BUY",
+        :age_class => "B",
+        :start_date => 2007
+      }
+      options = defaults.merge(options)
+
+      if options.region_id and options.city_id
+        response = connection(:marketdata).get("pricehistory/region/#{options.region_id}/city/#{options.city_id}" +
+                                               "?realEstateType=#{options.realestate_type}" +
+                                               "&ageClass=#{options.age_class}" +
+                                               "&startDate=#{options.startDate}")
+        
+        response.body
+      else
+        nil
+      end
+    end 
+
     protected
 
     def connection(connection_type = :default, callback_uri = nil)
@@ -190,6 +211,10 @@ module Is24
       defaults.merge!( {
         :url => API_OFFER_ENDPOINT
       } ) if connection_type =~ /offer/i
+
+      defaults.merge!({
+        :url => API_MARKETDATA_ENDPOINT
+      }) if connection_type =~ /marketdata/i
 
 
       # define oauth credentials
