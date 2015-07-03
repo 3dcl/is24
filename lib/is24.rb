@@ -223,10 +223,13 @@ module Is24
       # define oauth credentials
       oauth = {
         :consumer_key => @consumer_key,
-        :consumer_secret => @consumer_secret,
+        :consumer_secret => @consumer_secret
+      }
+
+      oauth.merge!({
         :token => @token,
         :token_secret => @secret
-      }
+      }) unless connection_type =~ /marketdata/i
 
       # merge callback_uri if present
       oauth.merge!( {
@@ -243,7 +246,7 @@ module Is24
             builder.response :mashify
             builder.response :json unless connection_type =~ /authorization/i
             builder.adapter Faraday.default_adapter
-          end
+      end
     end
 
   end
