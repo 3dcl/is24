@@ -172,7 +172,10 @@ module Is24
       response.body["shortlist.shortlistEntries"].first["shortlistEntry"]
     end
 
-    def price_history(options)
+    def price_history(request_token, options)
+      @token = request_token[:oauth_token]
+      @secret = request_token[:oauth_token_secret]
+
       defaults = {
         :realestate_type => "APARTMENT_BUY",
         :age_class => "B",
