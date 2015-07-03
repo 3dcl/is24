@@ -172,10 +172,7 @@ module Is24
       response.body["shortlist.shortlistEntries"].first["shortlistEntry"]
     end
 
-    def price_history(request_token, options)
-      @token = request_token[:oauth_token]
-      @secret = request_token[:oauth_token_secret]
-
+    def price_history(options)
       defaults = {
         :realestate_type => "APARTMENT_BUY",
         :age_class => "B",
@@ -223,13 +220,10 @@ module Is24
       # define oauth credentials
       oauth = {
         :consumer_key => @consumer_key,
-        :consumer_secret => @consumer_secret
-      }
-
-      oauth.merge!({
+        :consumer_secret => @consumer_secret,
         :token => @token,
         :token_secret => @secret
-      }) unless connection_type =~ /marketdata/i
+      }
 
       # merge callback_uri if present
       oauth.merge!( {
