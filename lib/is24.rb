@@ -243,6 +243,7 @@ module Is24
 
       Faraday::Connection.new( defaults ) do |builder|
             builder.request :oauth, oauth
+            builder.response :logger
             builder.response :mashify
             builder.response :json unless connection_type =~ /authorization/i
             builder.adapter Faraday.default_adapter
