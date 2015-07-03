@@ -245,7 +245,7 @@ module Is24
             builder.request :oauth, oauth
             builder.response :logger
             builder.response :mashify
-            builder.response :json unless connection_type =~ /authorization/i
+            # builder.response :json unless connection_type =~ /authorization/i
             builder.adapter Faraday.default_adapter
       end
     end
