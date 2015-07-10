@@ -251,15 +251,15 @@ module Is24
 
       # geocode = continentId+countryId+regionId+cityId+quarterId
       if options[:continent]
-        geocode << options[:continent]
+        geocode << options[:continent].to_s
         if options[:country]
-          geocode << options[:country]
+          geocode << options[:country].to_s
           if options[:region]
-            geocode << options[:region]
+            geocode << options[:region].to_s
             if options[:city]
-              geocode << options[:city]
+              geocode << options[:city].to_s
               if options[:quarter]
-                geocode << options[:quarter]
+                geocode << options[:quarter].to_s
               end
             end
           end
