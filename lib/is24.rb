@@ -130,7 +130,9 @@ module Is24
       defaults = {
         :channel => "hp",
         :realestatetype => ["housebuy"],
-        :geocodes => 1276
+        :geocodes => 1276,
+        :pagesize => 200,
+        :pagenumber => 1
       }
       options = defaults.merge(options)
       types = options[:realestatetype]
@@ -144,7 +146,7 @@ module Is24
 
       types.each do |type|
         options[:realestatetype] = type
-        response = connection.get("search/region", options )
+        response = connection.get("search/region.json", options )
         if response.status == 200
           if response.body["resultlist.resultlist"].resultlistEntries[0]['@numberOfHits'] == "0"
             response.body["resultlist.resultlist"].resultlistEntries[0].resultlistEntries = []
@@ -200,7 +202,8 @@ module Is24
         :url => API_ENDPOINT,
         :headers => {
           :accept =>  'application/json',
-          :user_agent => 'b\'nerd .media IS24 Ruby Client'}
+          :user_agent => 'b\'nerd .media IS24 Ruby Client'
+        }
       }
 
       defaults.merge!( {
