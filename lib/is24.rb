@@ -14,6 +14,7 @@ module Is24
     API_OFFER_ENDPOINT = "http://rest.immobilienscout24.de/restapi/api/offer/v1.0/"
     API_MARKETDATA_ENDPOINT = "https://rest.immobilienscout24.de/restapi/api/marketdata/v1.0/"
     API_AUTHORIZATION_ENDPOINT = "http://rest.immobilienscout24.de/restapi/security/"
+    API_GIS_ENDPOINT = "http://rest.immobilienscout24.de/restapi/api/gis/v1.0/"
 
     # TODO move in separate module
     MARKETING_TYPES = {
@@ -168,6 +169,7 @@ module Is24
       }
       options = defaults.merge(options)
       types = options[:realestatetype]
+      maxpages = options[:maxpages]
       
       case types
         when String
@@ -191,6 +193,7 @@ module Is24
 
           # query other pages if necessary
           num_pages = response.body["resultlist.resultlist"]["paging"]["numberOfPages"]
+          num_pages = maxpages if maxpages and maxpages < num_pages
           (2..num_pages).each do | page_number |
             options[:pagenumber] = page_number
 
@@ -207,6 +210,63 @@ module Is24
       end
 
       objects
+    end
+
+    def gis(options)
+      # http://rest.immobilienscout24.de/restapi/api/gis/v1.0/continent/{continent-id}/country/{country-id}/region/{region-id}/city/{city-id}/quarter/{quarter-id}
+      url = ""
+      if options[:continent]
+        url = "/continent/#{options[:continent]}/country"
+      else
+        url = "/country"
+      end
+
+      # add ids to path
+      if options[:country]
+        url << "#{options[:country]}/region"
+
+        if options[:region]
+          url << "#{options[:region]}/city"
+
+          if options[:city]
+            url << "#{options[:city]}/quarter"
+          end
+        end
+      end
+
+      # query in json format
+      url << ".json"
+
+      response = connection(:gis).get(url)      
+      if response.status == 200
+        response.body
+      else
+        [] 
+      end
+    end
+
+    def get_geocode(options)
+      
+      geocode = ""
+
+      # geocode = continentId+countryId+regionId+cityId+quarterId
+      if options[:continent]
+        geocode << options[:continent]
+        if options[:country]
+          geocode << options[:country]
+          if options[:region]
+            geocode << options[:region]
+            if options[:city]
+              geocode << options[:city]
+              if options[:quarter]
+                geocode << options[:quarter]
+              end
+            end
+          end
+        end
+      end
+
+      geocode
     end
 
     def expose(id)
@@ -268,6 +328,10 @@ module Is24
       defaults.merge!({
         :url => API_MARKETDATA_ENDPOINT
       }) if connection_type =~ /marketdata/i
+
+      defaults.merge!({
+        :url => API_GIS_ENDPOINT
+      }) if connection_type =~ /gis/i
 
 
       # define oauth credentials
