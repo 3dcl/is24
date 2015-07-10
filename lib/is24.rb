@@ -130,8 +130,7 @@ module Is24
       defaults = {
         :channel => "hp",
         :realestatetype => ["housebuy"],
-        :geocodes => 1276,
-        :username => "me"
+        :geocodes => 1276
       }
       options = defaults.merge(options)
       types = options[:realestatetype]
@@ -237,9 +236,9 @@ module Is24
 
       Faraday::Connection.new( defaults ) do |builder|
             builder.request :oauth, oauth
-            builder.response :logger
+            # builder.response :logger
             builder.response :mashify
-            # builder.response :json unless connection_type =~ /authorization/i
+            builder.response :json unless connection_type =~ /authorization/i
             builder.adapter Faraday.default_adapter
       end
     end
