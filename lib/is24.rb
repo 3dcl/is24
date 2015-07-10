@@ -251,16 +251,19 @@ module Is24
       geocode = ""
 
       # geocode = continentId+countryId+regionId+cityId+quarterId
+      # extend countryId, regionId, cityId and quarterId to 3 digits
+      # by adding zeros to the front
+      
       if options[:continent]
         geocode << options[:continent].to_s
         if options[:country]
-          geocode << options[:country].to_s
+          geocode << add_geocode_padding(options[:country])
           if options[:region]
-            geocode << options[:region].to_s
+            geocode << add_geocode_padding(options[:region])
             if options[:city]
-              geocode << options[:city].to_s
+              geocode << add_geocode_padding(options[:city])
               if options[:quarter]
-                geocode << options[:quarter].to_s
+                geocode << add_geocode_padding(options[:quarter])
               end
             end
           end
@@ -362,5 +365,14 @@ module Is24
       end
     end
 
+    def add_geocode_padding(id)
+      if id <= 9
+        "00#{id}"
+      elsif id <= 99
+        "0#{id}"
+      else
+        id.to_s
+      end          
+    end
   end
 end
