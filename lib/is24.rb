@@ -170,6 +170,7 @@ module Is24
       options = defaults.merge(options)
       types = options[:realestatetype]
       maxpages = options[:maxpages]
+      options.except! :maxpages
       
       case types
         when String
