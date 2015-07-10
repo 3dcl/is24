@@ -158,6 +158,57 @@ module Is24
       objects
     end
 
+    def search_all(options)
+      defaults = {
+        :channel => "is24",
+        :realestatetype => ["apartmentrent"],
+        :geocodes => 1276,
+        :pagesize => 200,
+        :pagenumber => 1
+      }
+      options = defaults.merge(options)
+      types = options[:realestatetype]
+      
+      case types
+        when String
+          types = [types]
+      end
+
+      objects = []
+
+      types.each do |type|
+        options[:realestate_type] = type
+        
+        # query first page
+        response = connection.get("search/region.json", options)
+
+        if response.status == 200
+          if response.body["resultlist.resultlist"].resultlistEntries[0]['@numberOfHits'] == "0"
+            response.body["resultlist.resultlist"].resultlistEntries[0].resultlistEntries = []
+          end
+          objects.push response.body["resultlist.resultlist"].resultlistEntries[0]
+
+
+          # query other pages if necessary
+          num_pages = response.body["resultlist.resultlist"]["paging"]["numberOfPages"]
+          (2..num_pages).each do | page_number |
+            options[:pagenumber] = page_number
+
+            response = connection.get("search/region.json", options)
+            if response.status == 200
+              if response.body["resultlist.resultlist"].resultlistEntries[0]['@numberOfHits'] == "0"
+                response.body["resultlist.resultlist"].resultlistEntries[0].resultlistEntries = []
+              end
+              objects.push response.body["resultlist.resultlist"].resultlistEntries[0]
+            end
+          end
+
+        end
+      end
+
+      objects
+    end
+
     def expose(id)
       response = connection.get("expose/#{id}")
       response.body["expose.expose"]
