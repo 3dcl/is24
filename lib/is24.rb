@@ -177,7 +177,7 @@ module Is24
       objects = []
 
       types.each do |type|
-        options[:realestate_type] = type
+        options[:realestatetype] = type
         
         # query first page
         response = connection.get("search/region.json", options)
